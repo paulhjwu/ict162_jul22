@@ -5,11 +5,11 @@ from math import pi
 class Shape(ABC):
 
     def __init__(self, length):
-        self.__length = length
+        self._length = length
     
     @property
     def length(self):
-        return self.__length
+        return self._length
 
     @abstractmethod
     def area(self):
@@ -19,14 +19,15 @@ class Rectangle(Shape):
 
     def __init__(self, length, width):
         super().__init__(length)
-        self.__width = width
+        self._width = width
     
     @property
     def width(self):
-        return self.__width
+        return self._width
 
     def area(self):
-        return self.__width * super().length
+        # return self._width * super().length
+        return self._width * self._length
 
 class Circle(Shape):
 
@@ -38,7 +39,7 @@ class Circle(Shape):
         return self.length
 
     def area(self):
-        return pi * super().length ** 2
+        return pi * self.radius ** 2
 
 if __name__ == "__main__":
 
