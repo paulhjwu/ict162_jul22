@@ -77,6 +77,10 @@ class Booking:
     def flight(self, newFlight):
         self._flight = newFlight
 
+    @property
+    def bkid(self):
+        return self._bkid
+
     def __str__(self):
         return f"Booking Id: {self._bkid}, Booking Date:{self._bkdate:%d/%m/%Y %H:%M}, Passenger: {self._passenger}, Flight: {self._flight}"
 
