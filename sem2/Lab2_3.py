@@ -54,7 +54,7 @@ class Airline:
             self._bookings.pop(bookingId)
             return True
         else:
-            False
+            return False
 
 
 if __name__ == "__main__":
