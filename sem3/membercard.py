@@ -1,4 +1,4 @@
-from cashcard import CashCard
+from cashcard_sem3 import CashCard
 
 class MemberCashCard(CashCard):
 
