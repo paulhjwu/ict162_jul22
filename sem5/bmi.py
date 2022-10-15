@@ -85,7 +85,7 @@ class BMIGui:
                 h = h/100
             w = float(self._weight.get())
             result = BMICalculator.bmi(h, w)
-        except Exeption as e:
+        except Exception as e:
             self._scrol_stxt.insert(END, str(e) + '\n')
         else:
             print(f'Weight {w:.1f}kg, Height {h:.2f}m, BMI = {result:.2f}\n')
