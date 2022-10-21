@@ -1,6 +1,6 @@
 from datetime import datetime
-from Flight_Passenger import Flight, Passenger
-from Booking import *
+from Flight_Passenger_sem6 import Flight, Passenger
+from Booking_sem6 import *
 
 class BookingException(Exception):
     '''Booking Exception User Defined Class'''
@@ -73,21 +73,168 @@ class Airline:
 # cannot be removed. Raise a BookingException with an appropriate
 # message. Also raise a BookingException for removing non-existing
 # booking id.
-
-    def deleteBooking(self, bookingId):
+    # def deleteBooking(self, bookingId):
+    def deleteBooking(self, bookingId, aDate):
         booking = self.searchBooking(bookingId)
         if booking is not None:
-            today = datetime.now()
+            # today = datetime.now()
             flightDate = booking.flight.departureDate
-            if today > flightDate:
+            if aDate > flightDate:
                 raise BookingException('Cannot delete a past flight')
             self._bookings.pop(bookingId)
         else:
             raise BookingException('Removing non-existing booking id')
 
+def getInt(menu):
+    while True:
+        try:
+            return int(input(f'{menu}'))
+        except ValueError as e:
+            print(f'Option Error, please re-enter')
 
+def loadBooking(airline):
+
+    try:
+        tryLoadBooking(airline)
+    except BookingException as e:
+        print(f"{e}\n")
+
+def tryLoadBooking(airline):
+
+    filename = input("File name to be uploaded for batch booking: ")
+
+    try:
+        infile = open(filename, "r")
+    except:
+        raise BookingException("Unable to locate file for batch booking")
+
+    try:
+        for line in infile:
+
+            parts = line.split(',')
+            pid,name,ydob=parts[1],parts[2],int(parts[3])
+            fno,destination,fare=parts[4],parts[5],float(parts[6])
+            fyy,fmm,fd,fh,fmn=(int(x) for x in parts[7:12])
+            byy,bmm,bd,bh,bmn=(int(x) for x in parts[12:17])
+
+            p1 = Passenger(pid,name,ydob)
+            
+            fdate = datetime(fyy,fmm,fd,fh,fmn)
+            f1 = Flight(fno,destination,fdate,fare)
+            
+            bdate = datetime(byy,bmm,bd,bh,bmn)
+
+            if parts[0].strip() == "Individual":
+                bk1 = IndividualBooking(p1, f1, bdate)
+                airline.addBooking(bk1)
+            elif parts[0].strip() == "Corporate":
+                cname = parts[17].strip()
+                bk1 = CorporateBooking(p1, f1, bdate, cname)
+                airline.addBooking(bk1)
+            else:
+                raise BookingException("Unknown passenger type")
+    finally:
+
+        infile.close()
+
+def getDate(message):
+    while True:
+        try:
+            aDate = input(f"Plase enter year, month, day, hr, min of {message}: ")
+            yy, mm, dd, hr, mn = (int(x) for x in aDate.split(','))
+            return datetime(yy,mm,dd,hr,mn)
+        except ValueError as e:
+            print(f'The input is not valid')
+
+def getFlight():
+    fInfo = input("Please enter flight number, destination, fare of the flight: ")
+    fnm, dest, fare = fInfo.split(',')
+    fare = float(fare)
+    dpDate = getDate('departure date')
+    return Flight(fnm, dest, dpDate, fare)
+
+def getPassenger():
+    pInfo = input("Please enter passenger id, name, year of birth: ")
+    pid, pname, yDob = pInfo.split(',')
+    yDob = int(yDob)
+    return Passenger(pid, pname, yDob)
+
+def addBooking(airline):
+
+    bktype = getInt('''Which type of booking
+1. Individual Booking
+2. Corporate Booking: ''')
+
+    f = getFlight()
+    p = getPassenger()
+    bkd = getDate("booking date")
+    # print(f,p,bkd)
+
+    try:
+        if bktype == 2:
+            cname = input("Enter name of corporation: ")
+            bk = CorporateBooking(p,f,bkd,cname)
+            airline.addBooking(bk)
+        else:
+            bk = IndividualBooking(p,f,bkd)
+            airline.addBooking(bk)
+    except BookingException as e:
+        print(e)
+    except Exception as e:
+        print(e)
+
+def deleteBooking(airline):
+    bkid = getInt(f"Enter booking id: ")
+    try:
+        today = datetime.now()
+        airline.deleteBooking(bkid, today)
+        print(f"Booking id={bkid} has been deleted")
+    except BookingException as e:
+        print(f"{e}\n\n")
+
+def changeBooking(airline):
+    bkid = getInt(f"The id of the booking to be changed: ")
+    newFlight =getFlight()
+    try:
+        airline.changeBooking(bkid,newFlight)
+        print(f"The booking id:{bkid} has been successfully changed")
+    except BookingException as e:
+        print(e)
 
 if __name__ == "__main__":
+
+    airline = Airline('Singapore Airline')
+
+    while True:
+
+        option = getInt('''Menu
+1. Add Booking
+2. Change Booking
+3. Delete Booking
+4. List Booking
+5. Load Booking
+6. Exit: ''')
+
+        if option == 6:
+            break
+        elif option == 1:
+            addBooking(airline)
+            # To write to a file, pls refer to https://www.w3schools.com/python/python_file_write.asp 
+        elif option == 2:
+            changeBooking(airline)
+        elif option == 3:
+            deleteBooking(airline)
+        elif option == 4:
+            for key, value in airline.bookings.items():
+                print(f"The booking with id:{key}\n{value}\n\n")
+        elif option == 5:
+            loadBooking(airline)
+        else:
+            print(f"Option not supported, please renter")
+
+        print(option)
+
+if __name__ == "__test__":
 
 # Test the Airline class with the following statements:
 # a. Create an Airline object.
