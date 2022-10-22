@@ -53,9 +53,9 @@ class Basket:
                     raise BasketException(f"Same fruit cannot have same size '{fruit}'/removed")
                 elif ft._size > fruit._size:
                     if ft._weight <= fruit._weight:
-                        raise BasketException(f"Price of fruit of smaller size '{fruit}'/removed must be ligher than '{ft}'")
+                        raise BasketException(f"Weight of fruit of smaller size '{fruit}'/removed must be ligher than '{ft}'")
                     elif fruitList[index-1]._weight >= fruit._weight:
-                        raise BasketException(f"Price of fruit of larger size '{fruit}'/removed must be heavier than '{fruitList[index-1]}'")
+                        raise BasketException(f"Weight of fruit of larger size '{fruit}'/removed must be heavier than '{fruitList[index-1]}'")
                     else:
                         insertIndex = index
                         found=True
@@ -80,6 +80,7 @@ Apple,2,3
 Orange,3,8
 Orange,2,3
 Apple,1,4
+Papaya,1,3
 Apple,3,5'''
 
     b2 = Basket('mary', True, inputData)
